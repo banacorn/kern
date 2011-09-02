@@ -4,23 +4,17 @@
 * mild error handling
 
 ======================================
-## Install
+# Install
 ```
 npm install redisev
 ```
 
-## Usage
-### redisev
-```
-var redisev = require('redisev');
-```
-### client
+# Usage
+## redisev
+    var redisev = require('redisev');
+## client
 register *one* client:
-```
-var client = redisev.register();
-```
+    var client = redisev.register();
 register *more than one* client:
-```
-var alice = redisev.register('alice');
-var bob = redisev.register('bob');
-```
+    var alice = redisev.register('alice');
+    var bob = redisev.register('bob');
