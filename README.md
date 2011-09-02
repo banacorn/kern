@@ -1,5 +1,4 @@
-redisev - evented redis client for node.js
-========================================
-currently built upon node_redis
-
-
+redisev - evented wrapper for node_redis
+======================================
+# Install
+'npm install redisev'

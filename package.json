@@ -1,0 +1,17 @@
+{
+  "author": "Elliot Lai <ellliotlai@gmail.com>",
+  "name": "redisev",
+  "description": "evented redis client",
+  "version": "0.0.0",
+  "homepage": "https://github.com/elliotlai/redisev",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/elliotlai/redisev.git"
+  },
+  "main": "./lib/redisev",
+  "engines": {
+    "node": "~v0.4.11"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
