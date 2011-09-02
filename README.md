@@ -33,31 +33,44 @@ give birth to a client
 
 * id : optional, unique id for a client
 
+----
+
 ### redisev.kill(id)
 
 kill a client
 
 * id : id of the client, will `disconnect()` before getting killed
 
-### connect(port, [host], [auth])
+----
+
+
+### client.connect(port, [host], [auth])
 
 connect to a redis server
 
 * port : yes, port
 * host : default as `localhost`
 * auth : default as empty, if no authenfication needed
+
+----
+
     
-### disconnect()
+### client.disconnect()
 
 disconnect from the current connection
 
-### command(command, args, [identifier])
+----
+
+
+### client.command(command, args, [identifier])
 
 send command to redis, same as `emit('command', { command: command, args: args, identifier: identifier})`
 
 * command: `GET`, `SET` ... etc
 * args: array of arguments
 * identifier: tag a identifier onto the emitting event, works like `command:id:identifier` under the hood
+
+----
 
 ## Events
 * **on** : listens all the time
