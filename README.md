@@ -64,7 +64,8 @@ disconnect from the current connection
 
 ### client.command(command, args, [identifier])
 
-send command to redis, same as `emit('command', { command: command, args: args, identifier: identifier})`
+send command to redis
+same as `emit('command', { command: command, args: args, identifier: identifier})`
 
 * command: `GET`, `SET` ... etc
 * args: array of arguments

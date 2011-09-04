@@ -8,10 +8,12 @@
     "type": "git",
     "url": "git://github.com/elliotlai/redisev.git"
   },
-  "main": "./lib/redisev",
+  "main": "./redisev",
   "engines": {
     "node": "~v0.4.11"
   },
-  "dependencies": {},
+  "dependencies": {
+    "hiredis": ">= 0.1.12"
+  },
   "devDependencies": {}
 }
