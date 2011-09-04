@@ -1,0 +1,114 @@
+doctype 5
+html ->
+    head ->
+        meta charset: 'utf-8'
+        title 'redisev'
+        link type: 'text/css', href: 'reset.css', rel: 'stylesheet'
+        link type: 'text/css', href: 'style.css', rel: 'stylesheet'
+        script src: 'lib/jquery-1.6.2.min.js'
+        script src: 'script.js'
+    body -> 
+        article ->
+            header '#header', ->
+                h1 ->
+                    text 'redis'
+                    span 'ev'
+            div '#main', ->
+                section ->
+                    h2 'Install'
+                    pre '''
+                    npm install redisev
+                    '''
+                section ->
+                    h2 'Usage'
+                    pre '''
+                    var redisev = require('redisev');
+                    var client = redisev.create();
+                    client.connect();
+                    '''
+                    h3 'SET and GET'
+                    pre '''
+                    client.set('lemon', 'some lemon');
+                    client.get('lemon', function (err, res) {
+                        console.log(res);
+                    });
+                    ''' 
+                    pre '''
+                    some lemon
+                    '''   
+                    h3 'I don\'t like spaghetti'
+                    pre '''
+                    client
+                        .get('lemon')
+                        .get('sugar')
+                        .collect(function (err, res) {
+                            console.log(res);
+                            makeLemonade(res);
+                        });
+                    
+                    '''
+                    pre '''
+                    ['some lemon', 'sugar']
+                    ''' 
+                    h3 'How about some events'
+                    pre '''
+                    client
+                        .get('lemon')
+                        .get('sugar')
+                        .collect('ingredients ready');
+                    
+                    client.on('ingredients ready', function(err, res){
+                            console.log(res);
+                            makeLemonade(res);                    
+                    });
+                    '''
+                    pre '''
+                    ['some lemon', 'sugar']
+                    '''
+                section '#methods', ->
+                    h2 'Methods'
+                    p ->
+                        text 'see '
+                        a href:'#helper_functions', 'Helper Functions'
+                        text ' if you\'re looking for something like'
+                        span '.inline', 'SET'
+                        span '.inline', 'GET'
+                    section ->
+                        h3 '.inline', 'redisev.create()'
+                        p 'Creates a client'
+                        pre '''
+                        var redisev = require('redisev');
+                        var client = redisev.create();
+                        '''   
+                    section ->        
+                        h3 '.inline', -> 
+                            text 'client.connect([port=6379], [host=\'localhost\'], [auth])'
+                        p 'Establish a connection and authenticate to the server'
+                        pre '''
+                        client.connect(6379, '140.113.123.123');
+                        '''    
+                    section ->        
+                        h3 '.inline', 'client.disconnect()'
+                        p 'Quit and disconnect from the server'
+                        pre '''
+                        client.disconnect();
+                        '''   
+                section '#helper_functions', ->
+                    h2 ->
+                        text 'Helper Functions'
+                        span '.hint', ' a.k.a commands' 
+                    p 'Basically all redis commands are supported, which comes in like: '
+                    pre '''
+                        client.command(arg0, arg1, arg2... , [callback])
+                    '''
+                    p 'e.g.'
+                    pre '''
+                        client.quit();
+                        client.incr(key);
+                        client.set(key, value);
+                        client.ping(callback);
+                        client.get(key, callback);
+                    '''
+                    
+            div '#aside', ->            
+                aside ->

@@ -1,0 +1,90 @@
+@import url(http://fonts.googleapis.com/css?family=Hammersmith+One|Droid+Sans+Mono|Varela+Round);
+body {
+  font-family: Verdana, "LiHei Pro", "微軟正黑體", Helvetica, Verdana, "新細明體", sans-serif;
+  color: #444;
+}
+a {
+  color: #800;
+  text-decoration: none;
+}
+h1 {
+  font-family: "Hammersmith One";
+}
+h2 {
+  font-family: "Hammersmith One";
+  font-size: 240%;
+}
+h3 {
+  font-family: "Hammersmith One";
+  font-size: 160%;
+  margin-top: 80px !important;
+}
+h3.inline {
+  font-size: 120%;
+  font-family: "Droid Sans Mono";
+  background: none;
+  color: #800;
+  font-weight: bold;
+}
+pre {
+  font-family: "Droid Sans Mono";
+  background: #eee;
+  padding: 10px;
+  line-height: 30px;
+}
+.inline {
+  font-family: "Droid Sans Mono";
+  background: #eee;
+  margin: 0 5px;
+  padding: 3px;
+}
+.param {
+  color: #444;
+}
+.hint {
+  color: #888;
+}
+article {
+  width: 1000px;
+  margin: 0 auto;
+}
+article #header {
+  height: 100px;
+}
+article #header h1 {
+  height: 100px;
+  color: #a00;
+  font-size: 360%;
+  line-height: 100px;
+}
+article #header h1 span {
+  color: #444;
+}
+article #main {
+  float: left;
+  width: 780px;
+  padding-right: 20px;
+}
+article #main > section {
+  margin: 120px 0;
+}
+article #main > section:first-of-type {
+  margin-top: 40px;
+}
+article #main > section > * {
+  margin: 20px 0;
+}
+article #main > section > section {
+  margin: 40px 0;
+}
+article #main > section > section > * {
+  margin: 20px 0;
+}
+article #aside {
+  float: left;
+  width: 200px;
+}
+article #aside > aside {
+  position: fixed;
+  width: 200px;
+}

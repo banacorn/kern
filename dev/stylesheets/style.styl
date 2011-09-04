@@ -1,0 +1,99 @@
+@css {    
+    @import url(http://fonts.googleapis.com/css?family=Hammersmith+One|Droid+Sans+Mono|Varela+Round);
+}
+
+prim = #AA0000
+seco = #880000
+base = #444444
+unua = #888888
+dua = #BBBBBB
+tria = #EEEEEE
+
+body
+    font-family Verdana, "LiHei Pro", "微軟正黑體", Helvetica, Verdana, "新細明體", sans-serif
+    color base
+
+a
+    color seco
+    text-decoration none
+
+h1
+    font-family 'Hammersmith One'
+    
+h2
+    font-family 'Hammersmith One'
+    font-size 240%
+    
+h3
+    font-family 'Hammersmith One'
+    font-size 160%    
+    margin-top 80px !important
+    &.inline
+        font-size 120%    
+        font-family 'Droid Sans Mono'
+        background none
+        color seco
+        font-weight bold
+
+pre
+    font-family 'Droid Sans Mono'
+    background tria
+    padding 10px
+    line-height 30px
+
+.inline
+    font-family 'Droid Sans Mono'
+    background tria
+    margin 0 5px
+    padding 3px
+
+.param
+    color base
+    
+.hint
+    color unua
+    
+article
+    width 1000px
+    margin 0 auto
+    
+    #header
+        height 100px
+        h1
+            height 100px
+            color prim
+            font-size 360%
+            line-height 100px
+            
+            span
+                color base
+    
+    #main
+        float left
+        width 780px
+        padding-right 20px
+        
+        > section            
+            margin 120px 0
+            
+            &:first-of-type
+                margin-top 40px
+            
+            > * 
+                margin 20px 0
+                
+            > section
+                margin 40px 0
+                > * 
+                    margin  20px 0
+        
+    #aside
+        float left
+        width 200px
+        
+        > aside
+            position fixed
+            width 200px
+    
+    
+

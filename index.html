@@ -1,2 +1,26 @@
-My GitHub Page
-sandvich
+<!DOCTYPE html><html><head><meta charset="utf-8" /><title>redisev</title><link type="text/css" href="reset.css" rel="stylesheet" /><link type="text/css" href="style.css" rel="stylesheet" /><script src="lib/jquery-1.6.2.min.js"></script><script src="script.js"></script></head><body><article><header id="header"><h1>redis<span>ev</span></h1></header><div id="main"><section><h2>Install</h2><pre>npm install redisev</pre></section><section><h2>Usage</h2><pre>var redisev = require('redisev');
+var client = redisev.create();
+client.connect();</pre><h3>SET and GET</h3><pre>client.set('lemon', 'some lemon');
+client.get('lemon', function (err, res) {
+    console.log(res);
+});</pre><pre>some lemon</pre><h3>I don't like spaghetti</h3><pre>client
+    .get('lemon')
+    .get('sugar')
+    .collect(function (err, res) {
+        console.log(res);
+        makeLemonade(res);
+    });
+</pre><pre>['some lemon', 'sugar']</pre><h3>How about some events</h3><pre>client
+    .get('lemon')
+    .get('sugar')
+    .collect('ingredients ready');
+
+client.on('ingredients ready', function(err, res){
+        console.log(res);
+        makeLemonade(res);                    
+});</pre><pre>['some lemon', 'sugar']</pre></section><section id="methods"><h2>Methods</h2><p>see <a href="#helper_functions">Helper Functions</a> if you're looking for something like<span class="inline">SET</span><span class="inline">GET</span></p><section><h3 class="inline">redisev.create()</h3><p>Creates a client</p><pre>var redisev = require('redisev');
+var client = redisev.create();</pre></section><section><h3 class="inline">client.connect([port=6379], [host='localhost'], [auth])</h3><p>Establish a connection and authenticate to the server</p><pre>client.connect(6379, '140.113.123.123');</pre></section><section><h3 class="inline">client.disconnect()</h3><p>Quit and disconnect from the server</p><pre>client.disconnect();</pre></section></section><section id="helper_functions"><h2>Helper Functions<span class="hint"> a.k.a commands</span></h2><p>Basically all redis commands are supported, which comes in like: </p><pre>client.command(arg0, arg1, arg2... , [callback])</pre><p>e.g.</p><pre>client.quit();
+client.incr(key);
+client.set(key, value);
+client.ping(callback);
+client.get(key, callback);</pre></section></div><div id="aside"><aside></aside></div></article></body></html>
