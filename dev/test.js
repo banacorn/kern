@@ -1,10 +1,11 @@
 var redisev = require('../redisev');
+
 var client = redisev.create();
-// client.connect(9838, 'filefish.redistogo.com', '0565140a7c5be78197e3c9f998083199');
+//client.connect(9838, 'filefish.redistogo.com', '0565140a7c5be78197e3c9f998083199');
 
 client.connect();
 
-
+/*
 client
     .ready(function () {
     }).reply(function (err, res) {
@@ -17,4 +18,14 @@ client
             console.log(res);
     }).error(function (err) {
         console.log(err);
-    });
+    });*/
+    
+
+/*
+client.on('reply', function (err, res) {
+    if (err)
+        console.log('err:' + err);
+    else
+        console.log(res);
+    
+});*/
