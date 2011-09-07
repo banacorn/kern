@@ -172,85 +172,6 @@ Client.prototype.slave = function() {
     return new Slave(this);
 }
 
-var Slave = function (master) {   
-    
-    // this and that
-    this._master = master
-    
-    // properties for the inherited methods
-    this._queue = master._queue;
-    this._emitter = master._emitter;
-    this._redis = master._redis;
-    this._send = master.send;
-    
-    // number of tasks left to be done
-    this.tasks = 0;
-    
-    // basket for collected goods
-    this.basket = [];
-    
-    // call this when all of the tasks have been done
-    this._done = function () {};
-};
-
-// inherits all of the methods from the master
-util.inherits(Slave, Client);
-
-// takeover by slave
-Slave.prototype.send = function () { 
-    var self = this;
-    
-    // arguments
-    var length = arguments.length,
-        args = [];        
-    for (var i = 0; i < length; i++)
-        args[i] = arguments[i];
-    
-    // callback for the queue
-    var callback = function (err, res) {
-    
-        // collect everything whether error or not
-        if(err)
-            self.basket.push(err)
-        else
-            self.basket.push(res)
-            
-        // task done!!
-        self.tasks--;
-        
-        // if all tasks are done
-        if (self.tasks === 0) { 
-        
-            // call the final callback, with basket of goods
-            self._done(self.basket);
-            
-            // empty the basket
-            self.basket = [];
-        }
-    };
-    
-    // attach the callbacks and replace the old one if needed
-    if (typeof arguments[length - 1] === 'function')
-        args[length - 1] = callback;
-    else
-        args[length] = callback;        
-        
-    // new task!
-    self.tasks++;
-    
-    // send!
-    self._send.apply(self._master, args);
-    
-    return this;
-};
-
-Slave.prototype.collect = function (callback) {
-    
-    // attach the final callback
-    this._done = callback;
-    
-    return this;
-}
 
 
 // ********************
@@ -279,6 +200,112 @@ Client.prototype.reply = function (callback) {
 
     return this;
 };
+
+
+
+// ********************
+//   Slave & Job
+// ********************
+
+
+var Job = function () {
+    // basket for collected goods
+    this.basket = [];
+    // number of tasks left to be done
+    this.task = 0;
+    // call this when all of the tasks have been done
+    this.collector;
+}
+
+Job.prototype.assign = function (master) {
+    var self = this;
+    
+    // new task assigned
+    self.task++;
+    
+    // return this function as a callback
+    return function (err, res) {
+        // collect everything whether error or not
+        if(err)
+            self.basket.push(err)
+        else
+            self.basket.push(res)
+            
+        // task done!!
+        self.task--;
+        
+        // check if all tasks are done
+        if (self.task === 0) { 
+        
+            // call the final callback, with basket of goods
+            self.collector(self.basket);
+            
+            // empty the basket
+            self.basket = [];
+            
+            // remove this job
+            master.job.shift();
+        }
+      
+    };
+};
+
+
+
+var Slave = function (master) {   
+    
+    // this and that
+    this._master = master
+    
+    // properties for the inherited methods
+    this._queue = master._queue;
+    this._emitter = master._emitter;
+    this._redis = master._redis;
+    this._send = master.send;
+    
+    
+    this.job = [];
+    this.job.push(new Job());
+};
+
+// inherits all of the methods from the master
+util.inherits(Slave, Client);
+
+// takeover by slave
+Slave.prototype.send = function () { 
+    var self = this;
+    // current job
+    var job = self.job[self.job.length - 1];   
+    
+    // arguments
+    var length = arguments.length,
+        args = [];        
+    for (var i = 0; i < length; i++)
+        args[i] = arguments[i];
+    
+    // attach the callbacks and replace the old one if needed
+    if (typeof arguments[length - 1] === 'function')
+        args[length - 1] = job.assign(self);
+    else
+        args[length] = job.assign(self);   
+        
+    // send!
+    self._send.apply(self._master, args);
+    
+    return this;
+};
+
+Slave.prototype.collect = function (callback) {
+        
+    // attach the final callback
+    this.job[this.job.length - 1].collector = callback;
+    
+    // new job!!
+    this.job.push(new Job());
+    
+    return this;
+}
+
 
 
 // ********************
