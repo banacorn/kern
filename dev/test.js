@@ -5,27 +5,26 @@ var client = redisev.create();
 
 client.connect();
 
-/*
+
+
+
 client
     .ready(function () {
-    }).reply(function (err, res) {
-        console.log(err);
+        console.log('READY!');
+    })
+    .reply(function (err, res) {
         console.log(res);
-    
-        if (err !== undefined)
-            console.log('RE: ' + err);
-        else
-            console.log(res);
-    }).error(function (err) {
+    })
+    .error(function (err) {
         console.log(err);
-    });*/
+    });
+        
+client.slave()
+    .ping('PING')
+    .send('GET', 'foo')
+    .collect(function (res) {
+        console.log(res);
+    });
     
 
-/*
-client.on('reply', function (err, res) {
-    if (err)
-        console.log('err:' + err);
-    else
-        console.log(res);
-    
-});*/
+

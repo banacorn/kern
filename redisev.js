@@ -1,5 +1,10 @@
-var emitter = require('events').EventEmitter
-    hiredis = require('hiredis');
+var Emitter = require('events').EventEmitter,
+    util = require('util'),
+    Redis = require('./lib/redis').Redis,
+    Queue = require('./lib/queue').Queue
+
+
+
 
 // ********************
 //     Constructor
@@ -7,18 +12,51 @@ var emitter = require('events').EventEmitter
 
 var Client = function () {
 
-    // event emitter
-    this._emitter = new emitter();
+    var self = this;
 
-    // socket    
-    this._client;
+    // event emitter
+    this._emitter = new Emitter();
+
+    // redis socket    
+    this._redis = new Redis(this._emitter);
     
     // queue for reply callbacks    
-    this._queue = [];
+    this._queue = new Queue();
     
     // basket for storing replies    
     this._basket = [];
+    
+    // reply from redis
+    this._emitter.on('redis reply', function (res) {
+    
+        // dequeue
+        var fn = self._queue.shift();
+        
+        // OK or ERROR
+        self.judge(res, function (res) { // OK
+         
+            // emit reply
+            self._emitter.emit('reply', undefined, res);
+                
+            // call the callback if it was attached, else dump it
+            if (typeof fn === 'function')
+                fn(undefined, res);
+            
+        }, function (res) { // error
+        
+            // emit reply
+            self._emitter.emit('reply', res, undefined);  
+                 
+            // call the callback if it was attached, else dump it
+            if (typeof fn === 'function')
+                fn(res, undefined);
+            
+        });
+    });
 }
+
+
+
 
 // ********************
 //     Methods
@@ -30,10 +68,11 @@ Client.prototype._authenticate = function(auth) {
 
     // authenticate to the server
     self.send('AUTH', auth || '', function(err, res) {
-        if (err === undefined)
-            self._emitter.emit('ready');
-        else
-            self._emitter.emit('error', err);
+        self.judge(res, function () {
+            self._emitter.emit('ready');        
+        }, function () {
+            self._emitter.emit('error', err);        
+        });
     });
 };
 
@@ -42,66 +81,19 @@ Client.prototype.connect = function(port, host, auth) {
   
     var self = this;
     
-    // connect to redis
-    self._client = hiredis.createConnection(
-        port || 6379, 
-        host || 'localhost'
+    self._redis.createConnection(
+        port || 6379,
+        host || '127.0.0.1'
     );
     
-    
-    
-    // homemade setTimeout, because socket's setTimeout clashes badly    
-    var alarm = setTimeout(function () {
-        self._emitter.emit('error', 'ETIMEDOUT');
-    }, 500);
-    
-    // on connect
-    self._client.on('connect', function () {
-    
-        // clear our homemade setTimeout bomb
-        clearTimeout(alarm);
-        
-        // authenticate
-        self._authenticate(auth);
-        
-        self._emitter.emit('connect');
-    });
-    
-    // on error
-    self._client.on('error', function(err) {
-        self._emitter.emit('error', err);
-    });
-    
-    // on ready
-    self._client.on('ready', function () {
-        self._emitter.emit('ready');
-    });
-    
-    // on reply, emitted by hiredis
-    self._client.on('reply', function(res) {
-    
-        var fn = self._queue.shift();
-        if (typeof fn === 'function') { // has callback
-            self.judge(res, function (res) {     
-                self._emitter.emit('reply', undefined, res); 
-                fn(undefined, res);  
-            }, function (res) {
-                self._emitter.emit('reply', res, undefined);  
-                fn(res, undefined);       
-            });
-            
-        } else { // dummy
-            self._basket.push(res);
-        }
-    
-    });
+    self._authenticate(auth)
 
+    return this;
 };
 
 Client.prototype.disconnect = function () {
     this.send('QUIT');
-    this._client.destroy();
-
+    this._redis.disconnect();
 };
 
 // sends command to redis
@@ -125,12 +117,14 @@ Client.prototype.send = function () {
             args[i] = arguments[i].toString();
             
         // push a dummy into the queue
-        self._queue.push('');
+        self._queue.push(0);
     
     }
     
     // write socket
-    self._client.write.apply(self._client, args);    
+    self._redis.write.apply(self._client, args);    
+
+    return this;
 };
 
 Client.prototype.collect = function(callback) {
@@ -139,27 +133,124 @@ Client.prototype.collect = function(callback) {
     } else if (typeof callback === 'string') {
     
     }
+
+    return this;
 };
 
 Client.prototype.judge = function(res, ok, err) {
     if (res.message !== undefined && res.message.match(/^ERR/))
         err(res);
     else
-        ok(res); 
+        ok(res);
+
+    return this;
 };
 
 Client.prototype.collect = function(callback) {
-    if (typeof callback === 'function') {
-        callback()
-    } else if (typeof callback === 'string') {
+    var self = this,
+        stuffs = self._basket;
+        
+    // clear the basket
+    self._basket = [];
     
+    if (typeof callback === 'function') {
+        callback(stuffs);
+    } else if (typeof callback === 'string') {
+        self._emitter.emit(callback, stuffs);
     }
+
+    return this;
 };
 
 Client.prototype.on = function(event, callback) {
     var self = this;
     self._emitter.on(event, callback);
 };
+
+
+Client.prototype.slave = function() {
+    return new Slave(this);
+}
+
+var Slave = function (master) {   
+    
+    // this and that
+    this._master = master
+    
+    // properties for the inherited methods
+    this._queue = master._queue;
+    this._emitter = master._emitter;
+    this._redis = master._redis;
+    this._send = master.send;
+    
+    // number of tasks left to be done
+    this.tasks = 0;
+    
+    // basket for collected goods
+    this.basket = [];
+    
+    // call this when all of the tasks have been done
+    this._done = function () {};
+};
+
+// inherits all of the methods from the master
+util.inherits(Slave, Client);
+
+// takeover by slave
+Slave.prototype.send = function () { 
+    var self = this;
+    
+    // arguments
+    var length = arguments.length,
+        args = [];        
+    for (var i = 0; i < length; i++)
+        args[i] = arguments[i];
+    
+    // callback for the queue
+    var callback = function (err, res) {
+    
+        // collect everything whether error or not
+        if(err)
+            self.basket.push(err)
+        else
+            self.basket.push(res)
+            
+        // task done!!
+        self.tasks--;
+        
+        // if all tasks are done
+        if (self.tasks === 0) { 
+        
+            // call the final callback, with basket of goods
+            self._done(self.basket);
+            
+            // empty the basket
+            self.basket = [];
+        }
+    };
+    
+    // attach the callbacks and replace the old one if needed
+    if (typeof arguments[length - 1] === 'function')
+        args[length - 1] = callback;
+    else
+        args[length] = callback;        
+        
+    // new task!
+    self.tasks++;
+    
+    // send!
+    self._send.apply(self._master, args);
+    
+    return this;
+};
+
+Slave.prototype.collect = function (callback) {
+    
+    // attach the final callback
+    this._done = callback;
+    
+    return this;
+}
 
 
 // ********************
@@ -170,11 +261,23 @@ Client.prototype.on = function(event, callback) {
 Client.prototype.ready = function (callback) {
     var self = this;
     self._emitter.on('ready', callback);    
+
+    return this;
 };
 
 Client.prototype.error = function (callback) {
     var self = this;
     self._emitter.on('error', callback);    
+
+    return this;
+};
+
+
+Client.prototype.reply = function (callback) {
+    var self = this;
+    self._emitter.on('reply', callback);
+
+    return this;
 };
 
 
@@ -182,10 +285,7 @@ Client.prototype.error = function (callback) {
 //     Exports
 // ********************
 
-var redisev = {
-    create: function () {
-        return new Client();
-    }
-};
-
-module.exports = redisev;
+module.exports.create = function () {
+    return new Client();
+}
+module.exports.Client = Client;
