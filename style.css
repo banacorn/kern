@@ -3,88 +3,78 @@ body {
   font-family: Verdana, "LiHei Pro", "微軟正黑體", Helvetica, Verdana, "新細明體", sans-serif;
   color: #444;
 }
+h2 {
+  height: 160px;
+  font-size: 240%;
+  font-family: "Hammersmith One";
+  line-height: 200px;
+}
 a {
   color: #800;
   text-decoration: none;
 }
-h1 {
-  font-family: "Hammersmith One";
-}
-h2 {
-  font-family: "Hammersmith One";
-  font-size: 240%;
-}
-h3 {
-  font-family: "Hammersmith One";
-  font-size: 160%;
-  margin-top: 80px !important;
-}
-h3.inline {
-  font-size: 120%;
-  font-family: "Droid Sans Mono";
-  background: none;
-  color: #800;
-  font-weight: bold;
-}
 pre {
-  font-family: "Droid Sans Mono";
-  background: #eee;
   padding: 10px;
-  line-height: 30px;
+  border-left: 4px solid #aaa;
+  background: #eee;
+  font-family: "Droid Sans Mono";
 }
 .inline {
   font-family: "Droid Sans Mono";
-  background: #eee;
-  margin: 0 5px;
-  padding: 3px;
 }
-.param {
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: rgba(100,100,100,0.50) 0 0 10px 0;
+  font-family: "Hammersmith One";
+}
+header nav {
+  width: 1000px;
+  height: 40px;
+  margin: 0 auto;
+  color: #aaa;
+  text-align: center;
+}
+header nav ul {
+  overflow: hidden;
+}
+header nav ul li {
+  float: left;
+  height: 40px;
+  padding: 0 40px;
+  font-size: 160%;
+  line-height: 40px;
+}
+header nav ul li:first-of-type {
+  padding-left: 0;
+}
+header nav ul li a {
+  color: inherit;
+}
+header nav ul li.selected,
+header nav ul li a:hover {
   color: #444;
 }
-.hint {
-  color: #888;
+header nav ul li h1 {
+  color: #c77c7c;
+}
+header nav ul li h1 span {
+  color: #aaa;
+}
+header nav ul li h1 a:hover,
+header nav ul li.selected h1 {
+  color: #a00;
+}
+header nav ul li h1 a:hover span,
+header nav ul li.selected h1 span {
+  color: #444;
 }
 article {
   width: 1000px;
   margin: 0 auto;
 }
-article #header {
-  height: 100px;
-}
-article #header h1 {
-  height: 100px;
-  color: #a00;
-  font-size: 360%;
-  line-height: 100px;
-}
-article #header h1 span {
-  color: #444;
-}
-article #main {
-  float: left;
-  width: 780px;
-  padding-right: 20px;
-}
-article #main > section {
-  margin: 120px 0;
-}
-article #main > section:first-of-type {
-  margin-top: 40px;
-}
-article #main > section > * {
-  margin: 20px 0;
-}
-article #main > section > section {
-  margin: 40px 0;
-}
-article #main > section > section > * {
-  margin: 20px 0;
-}
-article #aside {
-  float: left;
-  width: 200px;
-}
-article #aside > aside {
-  position: fixed;
-  width: 200px;
+article section {
+  height: 1000px;
 }

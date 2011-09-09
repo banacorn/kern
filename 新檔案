@@ -1,0 +1,94 @@
+   .file    "\255p\254\354.cpp"
+.globl _a
+    .data
+    .align 4
+_a:
+    .long    123
+    .def    ___main;    .scl    2;    .type    32;    .endef
+    .section .rdata,"dr"
+    .align 8
+LC1:
+    .long    -515396076
+    .long    1083394170
+    .text
+    .align 2
+.globl _main
+    .def    _main;    .scl    2;    .type    32;    .endef
+_main:
+    pushl    %ebp
+    movl    %esp, %ebp
+    subl    $56, %esp
+    andl    $-16, %esp
+    movl    $0, %eax
+    addl    $15, %eax
+    addl    $15, %eax
+    shrl    $4, %eax
+    sall    $4, %eax
+    movl    %eax, -28(%ebp)
+    movl    -28(%ebp), %eax
+    call    __alloca
+    call    ___main
+    movl    $123, -4(%ebp)
+    movl    $0x42f63d71, %eax
+    movl    %eax, -8(%ebp)
+    fldl    LC1
+    fstpl    -24(%ebp)
+    leal    -24(%ebp), %eax
+    movl    %eax, 8(%esp)
+    leal    -8(%ebp), %eax
+    movl    %eax, 4(%esp)
+    leal    -4(%ebp), %eax
+    movl    %eax, (%esp)
+    call    __Z2x1PiPfPd
+    leal    -9(%ebp), %eax
+    movl    %eax, 4(%esp)
+    movl    $_a, (%esp)
+    call    __Z2x2PiPc
+    movl    $0, %eax
+    leave
+    ret
+    .align 2
+.globl __Z2x1PiPfPd
+    .def    __Z2x1PiPfPd;    .scl    2;    .type    32;    .endef
+__Z2x1PiPfPd:
+    pushl    %ebp
+    movl    %esp, %ebp
+    subl    $16, %esp
+    movl    12(%ebp), %edx
+    movl    8(%ebp), %eax
+    fildl    (%eax)
+    fstps    (%edx)
+    movl    12(%ebp), %eax
+    flds    (%eax)
+    fstpl    -8(%ebp)
+    movl    12(%ebp), %edx
+    movl    16(%ebp), %eax
+    fldl    (%eax)
+    fstps    (%edx)
+    movl    16(%ebp), %eax
+    fldl    -8(%ebp)
+    fstpl    (%eax)
+    leave
+    ret
+    .align 2
+.globl __Z2x2PiPc
+    .def    __Z2x2PiPc;    .scl    2;    .type    32;    .endef
+__Z2x2PiPc:
+    pushl    %ebp
+    movl    %esp, %ebp
+    subl    $4, %esp
+    movl    8(%ebp), %eax
+    movl    (%eax), %eax
+    movl    %eax, -4(%ebp)
+    movl    8(%ebp), %edx
+    movl    12(%ebp), %eax
+    movsbl    (%eax),%eax
+    movl    %eax, (%edx)
+    movl    12(%ebp), %edx
+    movl    -4(%ebp), %eax
+    movb    %al, (%edx)
+    leave
+    ret
+    .def    __Z2x2PiPc;    .scl    3;    .type    32;    .endef
+    .def    __Z2x1PiPfPd;    .scl    3;    .type    32;    .endef
+

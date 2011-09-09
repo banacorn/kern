@@ -1,99 +1,104 @@
+
 @css {    
     @import url(http://fonts.googleapis.com/css?family=Hammersmith+One|Droid+Sans+Mono|Varela+Round);
 }
 
-prim = #AA0000
-seco = #880000
-base = #444444
-unua = #888888
-dua = #BBBBBB
-tria = #EEEEEE
+// ************************************
 
+
+
+brot = #AA0000
+rot = #880000
+drot = #660000
+base = #444444
+rain = #AAA
+air = #EEE
+
+
+
+// ************************************
 body
     font-family Verdana, "LiHei Pro", "微軟正黑體", Helvetica, Verdana, "新細明體", sans-serif
     color base
 
+h2
+    height 160px
+    font-size 240%
+    font-family 'Hammersmith One'
+    line-height 200px
+
 a
-    color seco
+    color rot
     text-decoration none
 
-h1
-    font-family 'Hammersmith One'
-    
-h2
-    font-family 'Hammersmith One'
-    font-size 240%
-    
-h3
-    font-family 'Hammersmith One'
-    font-size 160%    
-    margin-top 80px !important
-    &.inline
-        font-size 120%    
-        font-family 'Droid Sans Mono'
-        background none
-        color seco
-        font-weight bold
-
 pre
-    font-family 'Droid Sans Mono'
-    background tria
     padding 10px
-    line-height 30px
+    border-left 4px solid rain
+    background air
+    font-family 'Droid Sans Mono'
 
 .inline
     font-family 'Droid Sans Mono'
-    background tria
-    margin 0 5px
-    padding 3px
 
-.param
-    color base
+// ************************************
+
+
+header
+    position fixed
+    top 0
+    width 100%
+    background white
+    box-shadow rgba(100, 100, 100, 0.5) 0 0 10px 0
     
-.hint
-    color unua
+    font-family 'Hammersmith One'
+    
+    nav
+        width 1000px
+        height 40px
+        margin 0 auto
+        
+        color rain
+        
+        text-align center
+        ul
+            overflow hidden
+            
+            li            
+                float left
+                height 40px
+                padding 0 40px
+                &:first-of-type
+                    padding-left 0
+                
+                font-size 160%
+                line-height 40px
+                
+                a
+                    color inherit
+                    
+                &.selected
+                a:hover
+                    color base
+                    
+                h1
+                    color desaturate(lighten(rot, 50%), 60%)
+                    span
+                        color rain
+                        
+                h1 a:hover 
+                &.selected h1
+                    color brot
+                    span
+                        color base
     
 article
     width 1000px
     margin 0 auto
     
-    #header
-        height 100px
-        h1
-            height 100px
-            color prim
-            font-size 360%
-            line-height 100px
-            
-            span
-                color base
+    section
+        height 1000px
     
-    #main
-        float left
-        width 780px
-        padding-right 20px
-        
-        > section            
-            margin 120px 0
-            
-            &:first-of-type
-                margin-top 40px
-            
-            > * 
-                margin 20px 0
-                
-            > section
-                margin 40px 0
-                > * 
-                    margin  20px 0
-        
-    #aside
-        float left
-        width 200px
-        
-        > aside
-            position fixed
-            width 200px
+    
     
     
 
