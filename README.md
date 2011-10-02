@@ -1,6 +1,1 @@
-# redisev
-
-sandvich makes me strong
-
-
-    
+# rediz    

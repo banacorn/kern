@@ -1,5 +1,6 @@
 var Emitter = require('events').EventEmitter,
     util = require('util'),
+    _ = require('underscore'),
     Redis = require('./lib/redis').Redis,
     Queue = require('./lib/queue').Queue
 
@@ -13,7 +14,7 @@ var Emitter = require('events').EventEmitter,
 var Client = function () {
 
     var self = this;
-
+    
     // event emitter
     this._emitter = new Emitter();
 
@@ -62,7 +63,7 @@ var Client = function () {
 //     Methods
 // ********************
 
-Client.prototype._authenticate = function(auth) {
+Client.prototype.authenticate = function(auth) {
 
     var self = this;
 
@@ -86,7 +87,8 @@ Client.prototype.connect = function(port, host, auth) {
         host || '127.0.0.1'
     );
     
-    self._authenticate(auth)
+    if (auth !== undefined)
+        self.authenticate(auth);
 
     return this;
 };
@@ -272,22 +274,20 @@ var Slave = function (master) {
 util.inherits(Slave, Client);
 
 // takeover by slave
-Slave.prototype.send = function () { 
-    var self = this;
-    // current job
-    var job = self.job[self.job.length - 1];   
-    
-    // arguments
-    var length = arguments.length,
-        args = [];        
-    for (var i = 0; i < length; i++)
-        args[i] = arguments[i];
-    
-    // attach the callbacks and replace the old one if needed
-    if (typeof arguments[length - 1] === 'function')
-        args[length - 1] = job.assign(self);
+Slave.prototype.send = function () {
+
+    var self = this,
+        job = _(self.job).last(),           // current job
+        args = _(arguments).toArray(),      // arguments
+        hasCallback = _(args).chain()       // attach the callbacks and replace the old one if needed
+            .last()
+            .isFunction()
+            .value();
+                
+    if(hasCallback)
+        args[args.length - 1] = job.assign(self);
     else
-        args[length] = job.assign(self);   
+        args[args.length] = job.assign(self);   
         
     // send!
     self._send.apply(self._master, args);
