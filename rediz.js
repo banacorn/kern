@@ -3,7 +3,7 @@ var Emitter                     = require('events').EventEmitter,
     Redis                       = require('./lib/redis').Redis,
     Queue                       = require('./lib/queue').Queue,
     Collector                   = require('./lib/collector').Collector;
-    Postie                      = require('./lib/postie').Postie;
+
 
 
 // ********************
@@ -17,9 +17,8 @@ var Client = function () {
     this._redis                 = new Redis(this._emitter);     // redis socket
     this._collector             = new Collector(this);          // collector
     this._deferred              = false;
+    this._reconnect             = true;
      
-    
-    
     this._emitter
         .on('redis reply', function (res) {
             // Dequeue
@@ -30,26 +29,50 @@ var Client = function () {
                 callback(res, undefined);
             else
                 callback(undefined, res);
+        })
+        .on('error', function (err) {
+            console.log(util.inspect(err, true, 3));
         });
 };
 
 Client.prototype.on = function (event, callback) {
     this._emitter.on(event, callback);
+    return this;
 };
 
 Client.prototype.connect = function (port, host, auth) {    
+    
+    var self = this;
+    
+    this.host = host;
+    this.port = port;
+    this.auth = auth;
+    
+    
     this._redis.createConnection(
         port || 6379,
         host || '127.0.0.1'
     );
     if (auth !== undefined)
         this.send('AUTH', auth, function () {});
+        
+    this._redis._socket
+        .on('close', function () {
+            if (self._reconnect) {
+                console.log('trying to reconnect');
+                self._redis.createConnection(this.port, this.host, this.auth);
+            }
+        })
+        .on('error', function (err) {
+            console.log(util.inspect(err, true, 3));
+        });
+    
     return this;
 };
 
 Client.prototype.disconnect = function () {
     var self = this;
-    
+    this._reconnect = false;
     this.defer()
         .send('QUIT')
         .collect(function () { 
@@ -64,22 +87,45 @@ Client.prototype._commandParser = function (argument) {
     var hasCallback = (typeof argument[argument.length - 1] === 'function') ? true : false,
         args = [];
         
-    if (hasCallback) {    
-        // arguments to array, last element riiped (callback)
-        for (var i = 0, len = argument.length - 1; i < len; i++)
-            args[i] = argument[i].toString();            
+    
+    if (hasCallback) {
+    
+        if (Array.isArray(argument[1])) {
+            // if the 2nd argument is array
+            for (var i = 0, len = argument[1].length; i < len; i++)
+                args[i] = argument[1][i].toString();                
+        } else {
+            // arguments to array, last element ripped (callback)
+            for (var i = 0, len = argument.length - 1; i < len; i++)
+                args[i] = argument[i].toString();
+        }
+        
+        
         return {
             command: args,
             callback: argument[argument.length - 1]
-        }        
+        };
+        
+             
     } else {        
-        // arguments to array
-        for (var i = 0, len = argument.length; i < len; i++)
-            args[i] = argument[i].toString();            
+    
+    
+        if (Array.isArray(argument[1])) {
+            // if the 2nd argument is array
+            for (var i = 0, len = argument[1].length; i < len; i++)
+                args[i] = argument[1][i].toString();                
+        } else {
+            // arguments to array, last element ripped (callback)
+            for (var i = 0, len = argument.length; i < len; i++)
+                args[i] = argument[i].toString();
+        }   
+        
+        
+         
         return {
             command: args,
             callback: undefined
-        }
+        };
     }    
 };
 
@@ -104,9 +150,6 @@ Client.prototype.send = function () {
     return this;
 }
 
-Client.prototype.test = function (arg) {
-    console.log(arg);
-};
 Client.prototype._send = function (command, callback) {
 
     // reply queue
@@ -125,6 +168,7 @@ Client.prototype.defer = function () {
 };
 
 Client.prototype.collect = function (callback) {
+
     this._collector.callback(callback);
     this._collector.newTask();
     this._deferred = false;

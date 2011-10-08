@@ -1,8 +1,8 @@
 {
   "author": "Elliot Lai <ellliotlai@gmail.com>",
   "name": "rediz",
-  "description": "just another redis client",
-  "version": "0.0.0",
+  "description": "redis client with deferred requests and argument interpolation",
+  "version": "0.0.1",
   "homepage": "https://github.com/elliotlai/rediz",
   "repository": {
     "type": "git",
@@ -10,11 +10,10 @@
   },
   "main": "./rediz",
   "engines": {
-    "node": "~v0.4.11"
+    "node": "~v0.4.10"
   },
   "dependencies": {
-    "hiredis": ">= 0.1.12",
-    "underscore": ">= 1.1.7"
+    "hiredis": ">= 0.1.12"
   },
   "devDependencies": {}
 }
