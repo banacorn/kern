@@ -42,6 +42,8 @@ Client.prototype.on = function (event, callback) {
 
 Client.prototype.connect = function (port, host, auth) {    
     
+    console.log(arguments);
+    
     var self = this;
     
     this.host = host;
@@ -53,19 +55,22 @@ Client.prototype.connect = function (port, host, auth) {
         port || 6379,
         host || '127.0.0.1'
     );
+    
     if (auth !== undefined)
         this.send('AUTH', auth, function () {});
         
     this._redis._socket
-        .on('close', function () {
+        .on('close', function (hasError) {
+            if (hasError)
+                console.log('disconnected with error:');
             if (self._reconnect) {
                 console.log('trying to reconnect');
-                self._redis.createConnection(this.port, this.host, this.auth);
+                self.connect(self.port, self.host, self.auth);
             }
         })
         .on('error', function (err) {
             console.log(util.inspect(err, true, 3));
-        });
+        })
     
     return this;
 };
