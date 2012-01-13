@@ -1,16 +1,18 @@
 {
   "author": "Elliot Lai <ellliotlai@gmail.com>",
-  "name": "redis-kern",
+  "name": "kern",
   "description": "minimalistic node.js redis client",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/elliotlai/redis-kern.git"
+    "url": "git://github.com/elliotlai/kern.git"
   },
   "main": "index.js",
   "engines": {
     "node": "~0.6"
   },
-  "dependencies": {},
+  "dependencies": {
+    "hiredis": ">= 0.1.13"
+  },
   "devDependencies": {}
 }
