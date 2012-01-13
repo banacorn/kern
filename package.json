@@ -1,19 +1,16 @@
 {
   "author": "Elliot Lai <ellliotlai@gmail.com>",
-  "name": "rediz",
-  "description": "redis client with deferred requests and argument interpolation",
-  "version": "0.0.1",
-  "homepage": "https://github.com/elliotlai/rediz",
+  "name": "redis-kern",
+  "description": "minimalistic node.js redis client",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/elliotlai/rediz.git"
+    "url": "git://github.com/elliotlai/redis-kern.git"
   },
-  "main": "./rediz",
+  "main": "index.js",
   "engines": {
-    "node": "~v0.4.10"
+    "node": "~0.6"
   },
-  "dependencies": {
-    "hiredis": ">= 0.1.12"
-  },
+  "dependencies": {},
   "devDependencies": {}
 }
