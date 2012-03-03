@@ -7,7 +7,7 @@ Minimalistic Node.js client for Redis
 
 # Usage
 
-    var kern = require('kern').createConnection();
+    var kern = require('kern').createClient();
     
     kern.on('error', function (error) {
         console.log(error);    
@@ -20,15 +20,9 @@ Minimalistic Node.js client for Redis
     kern.end();
     
 # Methods
+## Kern.createClient([port='6379'], [host='127.0.0.1'])
 
-## createConnection([port='6379'], [host='127.0.0.1'])
-
-    var kern = require('kern').createConnection();
-    
-Same as above.
-
-    var kern = require('kern');
-    var kern = kern.createConnection();
+    var kern = require('kern').createClient();
     
 ## send(command, arg0, arg1, ..., [callback])
 
