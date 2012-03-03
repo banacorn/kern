@@ -7,7 +7,7 @@ var Kern = function () {
     this._queue = new Queue;
 }
 
-Kern.prototype.createConnection = function (port, host) {
+Kern.prototype.connect = function (port, host) {
 
     var that = this;
     this._socket = hiredis.createConnection(
@@ -85,4 +85,10 @@ Kern.prototype.send = function () {
 }
 
 
-module.exports = new Kern;
+module.exports = {
+    createClient: function (port, host) {
+        var kern = new Kern;
+        kern.connect(port, host)
+        return kern;
+    }
+}
