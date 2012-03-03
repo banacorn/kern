@@ -10,7 +10,6 @@ var Kern = function () {
 Kern.prototype.createConnection = function (port, host) {
 
     var that = this;
-
     this._socket = hiredis.createConnection(
         port || 6379,
         host || '127.0.0.1'
@@ -20,7 +19,7 @@ Kern.prototype.createConnection = function (port, host) {
     **  setTimeout
     */
     
-    this._socket.setTimeout(3000, function () {
+    this._socket.setTimeout(5000, function () {
         that._socket.emit('error', new Error('connect ETIMEDOUT'));
     });
     
@@ -39,11 +38,11 @@ Kern.prototype.createConnection = function (port, host) {
     **  reply
     */
     this._socket.on('reply', function (data) {
-        //console.log(data.toString());
         var callback = that._queue.shift();
         if (callback)
             callback(data.toString())
-        
+        if (that._queue.length === 0)
+            that._socket.emit('idle');
     });
     
     
@@ -87,10 +86,3 @@ Kern.prototype.send = function () {
 
 
 module.exports = new Kern;
-/*
-module.exports.createConnection = function () {
-    var kern = new Kern;
-    kern.createConnection();
-    kern.on = 
-    return kern;
-};*/

@@ -25,7 +25,7 @@ Minimalistic Node.js client for Redis
 
     var kern = require('kern').createConnection();
     
-This is same as above.
+Same as above.
 
     var kern = require('kern');
     var kern = kern.createConnection();
@@ -56,3 +56,7 @@ It is strongly suggested to listen to the event `"error"` right after `createCon
     kern.on('error', function (error) {
         console.log(error);
     })
+    
+## "idle"    
+
+
