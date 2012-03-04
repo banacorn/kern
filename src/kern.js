@@ -38,9 +38,13 @@ Kern.prototype.connect = function (port, host) {
     **  reply
     */
     this._socket.on('reply', function (data) {
+    
+        // shift the callback queue
         var callback = that._queue.shift();
-        if (callback)
+        
+        if (if typeof callback === 'function')
             callback(data.toString())
+            
         if (that._queue.length === 0)
             that._socket.emit('idle');
     });
