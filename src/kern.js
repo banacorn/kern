@@ -10,6 +10,10 @@ var Kern = function () {
 Kern.prototype.connect = function (port, host) {
 
     var that = this;
+    
+    if (this._socket)
+        this._socket.end();
+    
     this._socket = hiredis.createConnection(
         port || 6379,
         host || '127.0.0.1'
@@ -32,7 +36,7 @@ Kern.prototype.connect = function (port, host) {
         .once('data', clearTimeout)
         .once('error', clearTimeout)
         .once('reply', clearTimeout);
-    
+        
     
     /*
     **  reply
