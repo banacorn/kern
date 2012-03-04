@@ -44,10 +44,12 @@ Kern.prototype.connect = function (port, host) {
         
         if (typeof callback === 'function') {
         
-            if (/^Error/.test(data))            
+            if (/^Error/.test(data)) {  
+                this._socket.emit('reply error', data.toString());
                 callback(data.toString(), null)
-            else    
+            } else {
                 callback(null, data.toString())
+            }
                 
         }
             
