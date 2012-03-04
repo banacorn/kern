@@ -42,8 +42,14 @@ Kern.prototype.connect = function (port, host) {
         // shift the callback queue
         var callback = that._queue.shift();
         
-        if (if typeof callback === 'function')
-            callback(data.toString())
+        if (typeof callback === 'function') {
+        
+            if (/^Error/.test(data))            
+                callback(data.toString(), null)
+            else    
+                callback(null, data.toString())
+                
+        }
             
         if (that._queue.length === 0)
             that._socket.emit('idle');
