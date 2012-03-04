@@ -10,6 +10,9 @@ var Kern = function () {
 Kern.prototype.connect = function (port, host) {
 
     var that = this;
+    
+    console.log(this._socket)
+    
     this._socket = hiredis.createConnection(
         port || 6379,
         host || '127.0.0.1'
@@ -99,10 +102,4 @@ Kern.prototype.send = function () {
 }
 
 
-module.exports = {
-    createClient: function (port, host) {
-        var kern = new Kern;
-        kern.connect(port, host)
-        return kern;
-    }
-}
+module.exports.Kern = Kern;
