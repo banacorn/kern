@@ -103,10 +103,4 @@ Kern.prototype.send = function () {
 }
 
 
-module.exports = {
-    createClient: function (port, host) {
-        var kern = new Kern;
-        kern.connect(port, host)
-        return kern;
-    }
-}
+module.exports.Kern = Kern;
