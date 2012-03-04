@@ -39,13 +39,15 @@ Kern.prototype.connect = function (port, host) {
     */
     this._socket.on('reply', function (data) {
     
+        
+    
         // shift the callback queue
         var callback = that._queue.shift();
         
         if (typeof callback === 'function') {
         
             if (/^Error/.test(data)) {  
-                this._socket.emit('reply error', data.toString());
+                that._socket.emit('reply error', data.toString());
                 callback(data.toString(), null)
             } else {
                 callback(null, data.toString())
@@ -60,11 +62,11 @@ Kern.prototype.connect = function (port, host) {
     
     
     this.on = function (ev, cb) {
-        this._socket.on(ev, cb);
+        that._socket.on(ev, cb);
     };    
     
     this.end = function () {
-        this._socket.end();
+        that._socket.end();
     }
     
     return this;
