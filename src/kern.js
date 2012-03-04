@@ -62,11 +62,11 @@ Kern.prototype.connect = function (port, host) {
     
     
     this.on = function (ev, cb) {
-        this._socket.on(ev, cb);
+        that._socket.on(ev, cb);
     };    
     
     this.end = function () {
-        this._socket.end();
+        that._socket.end();
     }
     
     return this;
