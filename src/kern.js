@@ -39,15 +39,19 @@ Kern.prototype.connect = function (port, host) {
     */
     this._socket.on('reply', function (data) {
     
+        
+    
         // shift the callback queue
         var callback = that._queue.shift();
         
         if (typeof callback === 'function') {
         
-            if (/^Error/.test(data))            
+            if (/^Error/.test(data)) {  
+                that._socket.emit('reply error', data.toString());
                 callback(data.toString(), null)
-            else    
+            } else {
                 callback(null, data.toString())
+            }
                 
         }
             
